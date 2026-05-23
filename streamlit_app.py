@@ -232,18 +232,28 @@ with col_btn2:
 if predict_button:
     # Crea dataframe per predizione
     input_data = pd.DataFrame({
+        'const': [1.0],  # Aggiungi esplicitamente la costante
         'ora': [ora_decimale],
         'temperatura': [temperatura],
         'umidita': [umidita],
         'pioggia': [pioggia_val]
     })
     
-    from statsmodels.tools import add_constant
-    input_with_const = add_constant(input_data)
+    # Assicurati l'ordine corretto delle colonne
+    expected_cols = ['const', 'ora', 'temperatura', 'umidita', 'pioggia']
+    input_data = input_data[expected_cols]
     
     try:
-        # CORREZIONE: rimuovi 'exog_re=None'
-        prediction = model.predict(input_with_const)[0]
+        # Usa i coefficienti direttamente (predizione manuale)
+        coef = model.params
+        
+        prediction = (
+            coef['const'] * input_data['const'].iloc[0] +
+            coef['ora'] * input_data['ora'].iloc[0] +
+            coef['temperatura'] * input_data['temperatura'].iloc[0] +
+            coef['umidita'] * input_data['umidita'].iloc[0] +
+            coef['pioggia'] * input_data['pioggia'].iloc[0]
+        )
         
         st.markdown(f"""
         <div class="prediction-card">
@@ -263,22 +273,26 @@ if predict_button:
                 st.metric("🌧️ Condizioni", pioggia)
         
         with st.expander("🔬 **Info modello statistico**"):
+            # Mostra coefficienti
             coef_df = pd.DataFrame({
                 'Variabile': ['Intercetta', 'Ora', 'Temperatura', 'Umidità', 'Pioggia'],
                 'Coefficiente': [
-                    model.params.get('const', 0),
-                    model.params.get('ora', 0),
-                    model.params.get('temperatura', 0),
-                    model.params.get('umidita', 0),
-                    model.params.get('pioggia', 0)
+                    coef.get('const', 0),
+                    coef.get('ora', 0),
+                    coef.get('temperatura', 0),
+                    coef.get('umidita', 0),
+                    coef.get('pioggia', 0)
                 ]
             })
             st.dataframe(coef_df, use_container_width=True, hide_index=True)
             
+            # Formula
+            st.caption(f"📐 **Formula**: {coef['const']:.2f} + {coef['ora']:.2f}×ora + {coef['temperatura']:.2f}×temp + {coef['umidita']:.2f}×umidità + {coef['pioggia']:.2f}×pioggia")
+            
     except Exception as e:
         st.error(f"Errore nella predizione: {e}")
-        st.write("Debug - input shape:", input_with_const.shape)
-        st.write("Debug - expected features:", model.model.exog_names)
+        st.write("Debug - coefficienti:", dict(model.params))
+        st.write("Debug - input:", input_data.iloc[0].to_dict())
 
 else:
     st.info("👆 **Imposta i valori sopra e premi PREVEDI**")
