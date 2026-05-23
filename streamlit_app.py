@@ -1,10 +1,12 @@
-# streamlit_app.py - App principale
+# app.py - Versione con auto-addestramento all'avvio
 import streamlit as st
 import pickle
 import pandas as pd
 import numpy as np
 from datetime import time
 import plotly.express as px
+import os
+import sys
 
 # Configurazione pagina (deve essere il primo comando Streamlit)
 st.set_page_config(
@@ -17,7 +19,6 @@ st.set_page_config(
 # CSS per mobile
 st.markdown("""
     <style>
-        /* Miglioramenti per touch screen */
         .stButton button {
             width: 100%;
             padding: 0.75rem;
@@ -40,7 +41,6 @@ st.markdown("""
                 font-size: 1.8rem !important;
             }
         }
-        /* Card effetto per risultati */
         .prediction-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 1.5rem;
@@ -59,25 +59,114 @@ st.markdown("""
             font-size: 0.8rem;
             text-align: center;
         }
+        .training-box {
+            background-color: #f0f2f6;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# Carica modello
-@st.cache_resource
-def load_model():
-    try:
-        with open('mixed_model.pkl', 'rb') as f:
-            model_data = pickle.load(f)
-        return model_data
-    except FileNotFoundError:
-        st.error("❌ Modello non trovato! Esegui prima 'python train_model.py'")
-        st.stop()
-    except Exception as e:
-        st.error(f"❌ Errore nel caricamento: {e}")
-        st.stop()
+# Funzione per addestrare il modello
+def train_model():
+    """Addestra il modello e lo salva"""
+    with st.spinner('🧠 Addestramento del modello in corso... Attendere qualche secondo'):
+        try:
+            # Import qui per evitare conflitti
+            import numpy as np
+            import pandas as pd
+            from statsmodels.regression.mixed_linear_model import MixedLM
+            from statsmodels.tools import add_constant
+            
+            # Simula dati di esempio
+            np.random.seed(42)
+            n = 500
+            gruppi = np.repeat(range(50), 10)
+            
+            # Variabili
+            ora = np.random.uniform(6, 22, n)
+            temperatura = np.random.normal(20, 8, n)
+            umidita = np.random.normal(65, 15, n)
+            pioggia = np.random.binomial(1, 0.3, n)
+            
+            # Effetti casuali per gruppo
+            effetti_casuali = np.random.normal(0, 2, 50)
+            effetto_gruppo = effetti_casuali[gruppi]
+            
+            # Variabile target
+            target = (
+                5 + 
+                0.3 * ora + 
+                0.5 * temperatura - 
+                0.2 * umidita - 
+                1.5 * pioggia + 
+                effetto_gruppo + 
+                np.random.normal(0, 1, n)
+            )
+            
+            df = pd.DataFrame({
+                'target': target,
+                'ora': ora,
+                'temperatura': temperatura,
+                'umidita': umidita,
+                'pioggia': pioggia,
+                'gruppo': gruppi
+            })
+            
+            # Prepara per statsmodels
+            X = add_constant(df[['ora', 'temperatura', 'umidita', 'pioggia']])
+            y = df['target']
+            groups = df['gruppo']
+            
+            # Modello misto
+            model = MixedLM(y, X, groups)
+            result = model.fit(disp=False)  # disp=False per silenziare output
+            
+            # Salva modello
+            model_data = {
+                'model': result,
+                'feature_names': ['ora', 'temperatura', 'umidita', 'pioggia'],
+                'coefficienti': result.params.to_dict()
+            }
+            
+            with open('mixed_model.pkl', 'wb') as f:
+                pickle.dump(model_data, f)
+            
+            return True, result
+        except Exception as e:
+            return False, str(e)
 
-model_data = load_model()
-model = model_data['model']
+# Carica o addestra modello
+@st.cache_resource
+def load_or_train_model():
+    """Carica il modello se esiste, altrimenti lo addestra"""
+    model_file = 'mixed_model.pkl'
+    
+    if not os.path.exists(model_file):
+        # Mostra messaggio di training
+        st.info("📊 **Primo avvio**: il modello sta venendo addestrato...")
+        success, result = train_model()
+        if success:
+            st.success("✅ Modello addestrato con successo!")
+            # Ricarica il modello
+            with open(model_file, 'rb') as f:
+                return pickle.load(f)
+        else:
+            st.error(f"❌ Errore nell'addestramento: {result}")
+            st.stop()
+    else:
+        # Carica modello esistente
+        with open(model_file, 'rb') as f:
+            return pickle.load(f)
+
+# Carica modello
+try:
+    model_data = load_or_train_model()
+    model = model_data['model']
+except Exception as e:
+    st.error(f"❌ Errore critico: {e}")
+    st.stop()
 
 # Titolo
 st.title("📊 **Predittore con Mixed Model**")
@@ -124,7 +213,7 @@ with col2:
         help="Scegli le condizioni meteorologiche"
     )
 
-# Converti pioggia in variabile numerica
+# Converti pioggia
 pioggia_map = {
     "☀️ Sole": 0,
     "☁️ Nuvoloso": 0,
@@ -149,24 +238,20 @@ if predict_button:
         'pioggia': [pioggia_val]
     })
     
-    # Aggiungi costante (intercetta) come nel training
     from statsmodels.tools import add_constant
     input_with_const = add_constant(input_data)
     
-    # Predizione (senza effetti casuali - fixed effects only)
     try:
         prediction = model.predict(input_with_const, exog_re=None)[0]
         
-        # Mostra risultato
-        st.markdown("""
+        st.markdown(f"""
         <div class="prediction-card">
             <div style="font-size: 1.1rem;">📈 PREVISIONE</div>
-            <div class="prediction-value">{:.2f}</div>
+            <div class="prediction-value">{prediction:.2f}</div>
             <div style="font-size: 0.9rem;">unità di misura</div>
         </div>
-        """.format(prediction), unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
         
-        # Dettagli degli input
         with st.expander("📋 **Dettagli input**"):
             col_a, col_b = st.columns(2)
             with col_a:
@@ -176,9 +261,7 @@ if predict_button:
                 st.metric("🌡️ Temperatura", f"{temperatura}°C")
                 st.metric("🌧️ Condizioni", pioggia)
         
-        # Mostra coefficienti del modello
         with st.expander("🔬 **Info modello statistico**"):
-            st.caption("Coefficienti del modello (effetti fissi):")
             coef_df = pd.DataFrame({
                 'Variabile': ['Intercetta', 'Ora', 'Temperatura', 'Umidità', 'Pioggia'],
                 'Coefficiente': [
@@ -193,13 +276,10 @@ if predict_button:
             
     except Exception as e:
         st.error(f"Errore nella predizione: {e}")
-        st.info("Assicurati che il modello sia stato addestrato correttamente")
 
 else:
-    # Messaggio iniziale
     st.info("👆 **Imposta i valori sopra e premi PREVEDI**")
     
-    # Grafico esplicativo
     st.markdown("---")
     st.caption("📊 **Esempio di funzionamento** - Il modello tiene conto di:")
     col1, col2, col3 = st.columns(3)
@@ -210,7 +290,6 @@ else:
     with col3:
         st.caption("📦 **Effetti casuali**\n(per gruppo/stazione)")
 
-# Footer
 st.markdown("---")
-st.caption("💡 **Nota**: Questo è un modello dimostrativo con dati simulati")
+st.caption("💡 **Nota**: Modello dimostrativo con dati simulati | Addestrato automaticamente")
 st.caption("📱 App ottimizzata per dispositivi mobili | Mixed Linear Model")
