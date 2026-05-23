@@ -1,19 +1,23 @@
-# 🎈 Blank app template
+# 📊 Mixed Model Predictor
 
-A simple Streamlit app template for you to modify!
+App dimostrativa di regressione lineare a effetti misti.
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+## 🚀 Demo live
+[Link alla tua app dopo il deploy]
 
-### How to run it on your own machine
+## 📱 Features
+- Interfaccia ottimizzata per mobile/tablet
+- Input: orario, temperatura, umidità, condizioni meteo
+- Predizione in tempo reale
+- Visualizzazione coefficienti del modello
 
-1. Install the requirements
+## 🛠️ Tecnologie
+- Python + Streamlit
+- StatsModels (Mixed Linear Models)
+- Deploy su Hugging Face Spaces
 
-   ```
-   $ pip install -r requirements.txt
-   ```
-
-2. Run the app
-
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+## 👨‍💻 Uso locale
+```bash
+pip install -r requirements.txt
+python train_model.py
+streamlit run app.py
