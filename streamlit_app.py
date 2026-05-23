@@ -242,7 +242,8 @@ if predict_button:
     input_with_const = add_constant(input_data)
     
     try:
-        prediction = model.predict(input_with_const, exog_re=None)[0]
+        # CORREZIONE: rimuovi 'exog_re=None'
+        prediction = model.predict(input_with_const)[0]
         
         st.markdown(f"""
         <div class="prediction-card">
@@ -276,6 +277,8 @@ if predict_button:
             
     except Exception as e:
         st.error(f"Errore nella predizione: {e}")
+        st.write("Debug - input shape:", input_with_const.shape)
+        st.write("Debug - expected features:", model.model.exog_names)
 
 else:
     st.info("👆 **Imposta i valori sopra e premi PREVEDI**")
