@@ -2,7 +2,6 @@
 # Authors: F. Cola, M. Filoramo, G. Genouville, V. Mariani
 # Supervisor: Simone Panzeri
 # Project: Statistical Modeling of Traffic Accident Data on Large Road Networks
-# Course: Applied Statistics | Group 27
 
 import streamlit as st
 import pickle
@@ -17,42 +16,10 @@ import sys
 st.set_page_config(
     page_title="Accident Severity Predictor",
     page_icon="🚗",
-    layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-with st.sidebar:
-    st.markdown("### 📊 Applied Statistics | Group 27")
-    st.markdown("**Authors:** F. Cola, M. Filoramo, G. Genouville, V. Mariani")
-    st.markdown("**Supervisor:** S. Panzeri")
-
-# Simple fixed header using st.html (Streamlit 1.36+)
-st.html("""
-<div style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    padding: 12px 20px;
-    text-align: center;
-    z-index: 999;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    font-family: sans-serif;
-">
-    <div style="font-size: 14px; font-weight: 600; color: white;">
-        📊 Applied Statistics | Group 27
-    </div>
-    <div style="font-size: 12px; color: #e0e0e0; margin-top: 4px;">
-        F. Cola · M. Filoramo · G. Genouville · V. Mariani | Supervisor: S. Panzeri
-    </div>
-</div>
-""")
-
-# Add empty space at the top
-st.markdown("<div style='margin-top: 70px;'></div>", unsafe_allow_html=True)
-
-# Mobile-friendly CSS (solo per altri elementi)
+# Mobile-friendly CSS
 st.markdown("""
     <style>
         .stButton button {
@@ -364,4 +331,4 @@ if predict_button:
 st.markdown("---")
 st.caption("**Project**: Statistical Modeling of Traffic Accident Data on Large Road Networks")
 st.caption("**Data source**: French national road accident database (2019-2024)")
-st.caption("**Course**: Applied Statistics | **Group**: 27 | **Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
+st.caption("**Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
