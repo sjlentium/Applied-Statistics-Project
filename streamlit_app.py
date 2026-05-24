@@ -1,6 +1,6 @@
 # streamlit_app.py - Accident Severity Predictor using GLM Model
 # Authors: F. Cola, M. Filoramo, G. Genouville, V. Mariani
-# Supervisor: Simone Panzeri
+# Tutor: Simone Panzeri
 # Project: Statistical Modeling of Traffic Accident Data on Large Road Networks
 
 import streamlit as st
@@ -22,8 +22,20 @@ st.set_page_config(
 with st.sidebar:
     st.markdown("### 📊 Applied Statistics | Group 27")
     st.markdown("**Authors:** F. Cola, M. Filoramo, G. Genouville, V. Mariani")
-    st.markdown("**Supervisor:** S. Panzeri")
+    st.markdown("**Tutor:** S. Panzeri")
     st.divider()
+    st.markdown("""
+    ### 📊 **Statistical Modeling of Traffic Accident Data on Large Road Networks**
+    
+    This application is developed as part of a research project on **Statistical Modeling of Traffic Accident Data on Large Road Networks**, conducted in collaboration with public institutions. The goal is to gain an informed view of how traffic accidents are distributed over space and time, and how accident severity relates to environmental and contextual variables such as road characteristics, day category, and weather conditions.
+    
+    Using a Generalized Linear Model (GLM) fitted on the French national road accident database (2019-2024), this tool predicts the number of people involved in an accident based on:
+    - **Temporal factors** (year, time, day type, school holidays)
+    - **Road infrastructure** (intersection type, traffic regime, gradient, speed limits)
+    - **Environmental conditions** (urban/rural setting, illuminance)
+    
+    The model integrates spatial intensity and severity patterns to identify accident clusters and support road safety decision-making.
+    """)
 
 # Mobile-friendly CSS
 st.markdown("""
@@ -70,22 +82,6 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
-
-# Introduction and project description
-st.markdown("""
-## 📊 **Statistical Modeling of Traffic Accident Data on Large Road Networks**
-
-This application is developed as part of a research project on **Statistical Modeling of Traffic Accident Data on Large Road Networks**, conducted in collaboration with public institutions. The goal is to gain an informed view of how traffic accidents are distributed over space and time, and how accident severity relates to environmental and contextual variables such as road characteristics, day category, and weather conditions.
-
-Using a Generalized Linear Model (GLM) fitted on the French national road accident database (2019-2024), this tool predicts the number of people involved in an accident based on:
-- **Temporal factors** (year, time, day type, school holidays)
-- **Road infrastructure** (intersection type, traffic regime, gradient, speed limits)
-- **Environmental conditions** (urban/rural setting, illuminance)
-
-The model integrates spatial intensity and severity patterns to identify accident clusters and support road safety decision-making.
-""")
-
-st.divider()
 
 # Load the pre-trained GLM model
 @st.cache_resource
@@ -337,4 +333,4 @@ if predict_button:
 st.markdown("---")
 st.caption("**Project**: Statistical Modeling of Traffic Accident Data on Large Road Networks")
 st.caption("**Data source**: French national road accident database (2019-2024)")
-st.caption("**Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
+st.caption("**Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Tutor**: S. Panzeri")
