@@ -17,38 +17,39 @@ import sys
 st.set_page_config(
     page_title="Accident Severity Predictor",
     page_icon="🚗",
+    layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# Mobile-friendly CSS
+# Simple fixed header using st.html (Streamlit 1.36+)
+st.html("""
+<div style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 12px 20px;
+    text-align: center;
+    z-index: 999;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-family: sans-serif;
+">
+    <div style="font-size: 14px; font-weight: 600; color: white;">
+        📊 Applied Statistics | Group 27
+    </div>
+    <div style="font-size: 12px; color: #e0e0e0; margin-top: 4px;">
+        F. Cola · M. Filoramo · G. Genouville · V. Mariani | Supervisor: S. Panzeri
+    </div>
+</div>
+""")
+
+# Add empty space at the top
+st.markdown("<div style='margin-top: 70px;'></div>", unsafe_allow_html=True)
+
+# Mobile-friendly CSS (solo per altri elementi)
 st.markdown("""
     <style>
-        .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            text-align: center;
-            z-index: 999;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            font-size: 0.9rem;
-        }
-        .fixed-header h4 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-        .fixed-header p {
-            margin: 0.25rem 0 0 0;
-            font-size: 0.8rem;
-            opacity: 0.9;
-        }
-        .main-header-spacer {
-            margin-top: 70px;
-        }
         .stButton button {
             width: 100%;
             padding: 0.75rem;
@@ -64,18 +65,6 @@ st.markdown("""
             display: none;
         }
         @media (max-width: 768px) {
-            .fixed-header {
-                padding: 0.5rem 1rem;
-            }
-            .fixed-header h4 {
-                font-size: 0.85rem;
-            }
-            .fixed-header p {
-                font-size: 0.7rem;
-            }
-            .main-header-spacer {
-                margin-top: 60px;
-            }
             .main > div {
                 padding: 1rem;
             }
@@ -103,17 +92,6 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
-
-# Fixed header with course and group information
-st.markdown("""
-<div class="fixed-header">
-    <p>📊 Applied Statistics | Group 27<p>
-    <p>F. Cola · M. Filoramo · G. Genouville · V. Mariani | Tutor: S. Panzeri</p>
-</div>
-""", unsafe_allow_html=True)
-
-# Spacer to prevent content from hiding under fixed header
-st.markdown('<div class="main-header-spacer"></div>', unsafe_allow_html=True)
 
 # Introduction and project description
 st.markdown("""
