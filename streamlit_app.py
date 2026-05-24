@@ -2,6 +2,7 @@
 # Authors: F. Cola, M. Filoramo, G. Genouville, V. Mariani
 # Supervisor: Simone Panzeri
 # Project: Statistical Modeling of Traffic Accident Data on Large Road Networks
+# Course: Applied Statistics | Group 27
 
 import streamlit as st
 import pickle
@@ -22,6 +23,32 @@ st.set_page_config(
 # Mobile-friendly CSS
 st.markdown("""
     <style>
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-align: center;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+        .fixed-header h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .fixed-header p {
+            margin: 0.25rem 0 0 0;
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        .main-header-spacer {
+            margin-top: 70px;
+        }
         .stButton button {
             width: 100%;
             padding: 0.75rem;
@@ -37,6 +64,18 @@ st.markdown("""
             display: none;
         }
         @media (max-width: 768px) {
+            .fixed-header {
+                padding: 0.5rem 1rem;
+            }
+            .fixed-header h4 {
+                font-size: 0.85rem;
+            }
+            .fixed-header p {
+                font-size: 0.7rem;
+            }
+            .main-header-spacer {
+                margin-top: 60px;
+            }
             .main > div {
                 padding: 1rem;
             }
@@ -64,6 +103,17 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
+# Fixed header with course and group information
+st.markdown("""
+<div class="fixed-header">
+    <h4>📊 Applied Statistics | Group 27</h4>
+    <p>F. Cola · M. Filoramo · G. Genouville · V. Mariani | Supervisor: S. Panzeri</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Spacer to prevent content from hiding under fixed header
+st.markdown('<div class="main-header-spacer"></div>', unsafe_allow_html=True)
 
 # Introduction and project description
 st.markdown("""
@@ -331,4 +381,4 @@ if predict_button:
 st.markdown("---")
 st.caption("**Project**: Statistical Modeling of Traffic Accident Data on Large Road Networks")
 st.caption("**Data source**: French national road accident database (2019-2024)")
-st.caption("**Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
+st.caption("**Course**: Applied Statistics | **Group**: 27 | **Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
