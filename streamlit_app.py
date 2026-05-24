@@ -240,7 +240,6 @@ with col2:
     )
 
 # Prediction button
-st.markdown("---")
 col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
 with col_btn2:
     predict_button = st.button("🔮 **PREDICT**", use_container_width=True)
@@ -316,9 +315,6 @@ if predict_button:
         
         st.caption(f"📐 **Prediction formula**: Intercept + sum of all effects based on selected inputs")
         st.caption("⚠️ **Note**: Coefficients from GLM fitted on French accident database (2019-2024, n=320,488)")
-
-else:
-    st.info("👆 **Set the values above and press PREDICT**")
     
     st.markdown("---")
     st.caption("📊 **Model insights based on French accident data (2019-2024):**")
@@ -335,6 +331,6 @@ else:
 
 st.markdown("---")
 st.caption("💡 **Project**: Statistical Modeling of Traffic Accident Data on Large Road Networks")
-st.caption("📊 **Data source**: French national road accident database (2005-2024) | Consolidated for 2019-2024")
+st.caption("📊 **Data source**: French national road accident database (2019-2024)")
 st.caption("👥 **Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
 st.caption("📱 **Mobile-optimized** | GLM-based Accident Severity Predictor")
