@@ -1,4 +1,4 @@
-# app.py - Accident Severity Predictor using GLM Model
+# streamlit_app.py - Accident Severity Predictor using GLM Model
 # Authors: F. Cola, M. Filoramo, G. Genouville, V. Mariani
 # Supervisor: Simone Panzeri
 # Project: Statistical Modeling of Traffic Accident Data on Large Road Networks
