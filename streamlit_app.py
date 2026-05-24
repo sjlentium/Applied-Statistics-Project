@@ -186,6 +186,17 @@ with col1:
         help="Type of day (workday vs weekend)"
     )
 
+    # Lighting
+    st.subheader("💡 **Lighting**")
+    illuminance = st.slider(
+        "Illuminance (lux)",
+        min_value=0,
+        max_value=100000,
+        value=5000,
+        step=1000,
+        help="Light level at accident location. Computed from solar altitude via skylight R package (0 = darkness, 100000 = bright sunlight)"
+    )
+
 with col2:
     st.subheader("🏗️ **Road & Location**")
     
@@ -229,16 +240,6 @@ with col2:
         step=10,
         help="Maximum allowed speed on the road (speed limit)"
     )
-
-st.subheader("💡 **Lighting**")
-illuminance = st.slider(
-    "Illuminance (lux)",
-    min_value=0,
-    max_value=100000,
-    value=5000,
-    step=1000,
-    help="Light level at accident location. Computed from solar altitude via skylight R package (0 = darkness, 100000 = bright sunlight)"
-)
 
 # Prediction button
 st.markdown("---")
