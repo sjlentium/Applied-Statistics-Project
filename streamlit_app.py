@@ -330,8 +330,6 @@ if predict_button:
         st.caption("⚡ **Higher speed** → more people involved")
 
 st.markdown("---")
-st.caption("💡 **Project**: Statistical Modeling of Traffic Accident Data on Large Road Networks\n
-📊 **Data source**: French national road accident database (2019-2024)\n
-👥 **Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
-st.caption("📊 **Data source**: French national road accident database (2019-2024)")
-st.caption("👥 **Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
+st.caption("**Project**: Statistical Modeling of Traffic Accident Data on Large Road Networks")
+st.caption("**Data source**: French national road accident database (2019-2024)")
+st.caption("**Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
