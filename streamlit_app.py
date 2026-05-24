@@ -224,7 +224,7 @@ illuminance = st.slider(
 st.markdown("---")
 col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
 with col_btn2:
-    predict_button = st.button("🔮 **PREDICT**", use_container_width=True)
+    predict_button = st.button("🔮 **PREDICT**", width='stretch')
 
 # Display prediction
 if predict_button:
@@ -293,7 +293,7 @@ if predict_button:
                 coef_data.append([f"Intersection - {cat}", f"{coef:.4f}"])
         
         coef_df = pd.DataFrame(coef_data, columns=["Variable", "Coefficient"])
-        st.dataframe(coef_df, use_container_width=True, hide_index=True)
+        st.dataframe(coef_df, width='stretch', hide_index=True)
         
         st.caption(f"📐 **Prediction formula**: Intercept + sum of all effects based on selected inputs")
 
