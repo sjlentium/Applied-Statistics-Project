@@ -1,4 +1,8 @@
-# app.py - Accident Predictor using GLM Model
+# app.py - Accident Severity Predictor using GLM Model
+# Authors: F. Cola, M. Filoramo, G. Genouville, V. Mariani
+# Supervisor: Simone Panzeri
+# Project: Statistical Modeling of Traffic Accident Data on Large Road Networks
+
 import streamlit as st
 import pickle
 import pandas as pd
@@ -62,22 +66,38 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Introduction and project description
+st.markdown("""
+### 📊 **Project Overview**
+
+This application is developed as part of a research project on **Statistical Modeling of Traffic Accident Data on Large Road Networks**, conducted in collaboration with public institutions. The goal is to gain an informed view of how traffic accidents are distributed over space and time, and how accident severity relates to environmental and contextual variables such as road characteristics, day category, and weather conditions.
+
+Using a Generalized Linear Model (GLM) fitted on the French national road accident database (2005-2024), this tool predicts the number of people involved in an accident based on:
+- **Temporal factors** (year, time, day type, school holidays)
+- **Road infrastructure** (intersection type, traffic regime, gradient, speed limits)
+- **Environmental conditions** (urban/rural setting, illuminance)
+
+The model integrates spatial intensity and severity patterns to identify accident clusters and support road safety decision-making.
+""")
+
+st.divider()
+
 # Load the pre-trained GLM model
 @st.cache_resource
 def load_model():
     """Load the pre-trained GLM model coefficients"""
     
-    # Model coefficients from your GLM output
+    # Model coefficients from GLM analysis of French accident data (2019-2024)
     model_coefficients = {
         'intercept': 2.648e+00,
         'source_year': {
-            '2020': -5.033e-02,
+            '2020': -5.033e-02,  # COVID-19 lockdown effect
             '2021': 3.078e-02,
             '2022': 4.399e-02,
             '2023': 5.182e-02,
             '2024': 6.130e-02
         },
-        'numeric_time': 2.335e-01,
+        'numeric_time': 2.335e-01,  # Normalized hour (0-1)
         'urban': {
             'Urban': 8.480e-02,
             'Non-urban': 0.0  # reference
@@ -125,7 +145,7 @@ model = load_model()
 
 # Title
 st.title("🚗 **Accident Severity Predictor**")
-st.markdown("*GLM Model for predicting number of people involved in traffic accidents*")
+st.markdown("*GLM-based prediction of people involved in road accidents (French database 2019-2024)*")
 st.divider()
 
 # Layout columns for inputs
@@ -138,14 +158,14 @@ with col1:
     source_year = st.selectbox(
         "Year",
         options=[2020, 2021, 2022, 2023, 2024],
-        help="Year of the accident"
+        help="Year of the accident (data available from French national database)"
     )
     
     # Numeric time (converted from time input)
     accident_time = st.time_input(
         "Accident time",
         value=time(12, 0),
-        help="Time when the accident occurred"
+        help="Time when the accident occurred (24-hour format)"
     )
     numeric_time = accident_time.hour + accident_time.minute/60
     # Normalize to 0-1 range (assuming 24-hour cycle)
@@ -155,7 +175,7 @@ with col1:
     school_holidays = st.selectbox(
         "School holidays",
         options=["No", "Yes"],
-        help="Are school holidays in effect?"
+        help="School holidays in effect (data from French Ministry of Education)"
     )
     school_holidays_bool = school_holidays == "Yes"
     
@@ -163,7 +183,7 @@ with col1:
     day_type = st.selectbox(
         "Day type",
         options=["Work day", "Saturday", "Sunday"],
-        help="Type of day"
+        help="Type of day (workday vs weekend)"
     )
 
 with col2:
@@ -173,7 +193,7 @@ with col2:
     urban = st.selectbox(
         "Area type",
         options=["Non-urban", "Urban"],
-        help="Urban or non-urban area"
+        help="Urban (code 2) or rural (code 1) area as per French classification"
     )
     
     # Intersection type
@@ -182,7 +202,7 @@ with col2:
         options=["No intersection", "X-shaped", "T-shaped", "Y-shaped", 
                  "4 or more branches", "Roundabout", "Square", 
                  "Level crossing", "Other intersection", "Unknown"],
-        help="Type of intersection"
+        help="Type of intersection at accident location (French classification)"
     )
     
     # Traffic pattern
@@ -190,14 +210,14 @@ with col2:
         "Traffic pattern",
         options=["Other/Unknown", "One-way", "Two-way", "Dual carriageway", 
                  "Dynamical lane assignment"],
-        help="Traffic flow pattern"
+        help="Traffic regime at accident location"
     )
     
     # Gradient
     gradient = st.selectbox(
         "Road gradient",
         options=["Other/Unknown", "Flat", "Hill", "Top of the hill", "Bottom of the hill"],
-        help="Road gradient condition"
+        help="Declivity of the road at accident location"
     )
     
     # Max speed
@@ -207,7 +227,7 @@ with col2:
         max_value=130,
         value=50,
         step=10,
-        help="Maximum allowed speed on the road"
+        help="Maximum allowed speed on the road (speed limit)"
     )
 
 st.subheader("💡 **Lighting**")
@@ -217,14 +237,14 @@ illuminance = st.slider(
     max_value=100000,
     value=5000,
     step=1000,
-    help="Light level at accident location (0 = complete darkness, 100000 = bright sunlight)"
+    help="Light level at accident location. Computed from solar altitude via skylight R package (0 = darkness, 100000 = bright sunlight)"
 )
 
 # Prediction button
 st.markdown("---")
 col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
 with col_btn2:
-    predict_button = st.button("🔮 **PREDICT**", width='stretch')
+    predict_button = st.button("🔮 **PREDICT**", use_container_width=True)
 
 # Display prediction
 if predict_button:
@@ -251,7 +271,7 @@ if predict_button:
     <div class="prediction-card">
         <div style="font-size: 1.1rem;">📊 PREDICTED NUMBER OF PEOPLE INVOLVED</div>
         <div class="prediction-value">{prediction:.1f}</div>
-        <div style="font-size: 0.9rem;">people</div>
+        <div style="font-size: 0.9rem;">people (including injured, hospitalized, and killed)</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -276,10 +296,10 @@ if predict_button:
         coef_data = []
         
         coef_data.append(["Intercept", f"{model['intercept']:.4f}"])
-        coef_data.append(["Numeric time", f"{model['numeric_time']:.4f}"])
-        coef_data.append(["Max speed", f"{model['max_speed']:.4f}"])
-        coef_data.append(["School holidays", f"{model['school_holidays']:.4f}"])
-        coef_data.append(["Illuminance", f"{model['illuminance']:.2e}"])
+        coef_data.append(["Numeric time (normalized 0-1)", f"{model['numeric_time']:.4f}"])
+        coef_data.append(["Max speed (km/h)", f"{model['max_speed']:.4f}"])
+        coef_data.append(["School holidays (binary)", f"{model['school_holidays']:.4f}"])
+        coef_data.append(["Illuminance (lux)", f"{model['illuminance']:.2e}"])
         
         for year, coef in model['source_year'].items():
             coef_data.append([f"Year {year}", f"{coef:.4f}"])
@@ -293,26 +313,29 @@ if predict_button:
                 coef_data.append([f"Intersection - {cat}", f"{coef:.4f}"])
         
         coef_df = pd.DataFrame(coef_data, columns=["Variable", "Coefficient"])
-        st.dataframe(coef_df, width='stretch', hide_index=True)
+        st.dataframe(coef_df, use_container_width=True, hide_index=True)
         
         st.caption(f"📐 **Prediction formula**: Intercept + sum of all effects based on selected inputs")
+        st.caption("⚠️ **Note**: Coefficients from GLM fitted on French accident database (2019-2024, n=320,488)")
 
 else:
     st.info("👆 **Set the values above and press PREDICT**")
     
     st.markdown("---")
-    st.caption("📊 **Model insights based on real accident data:**")
+    st.caption("📊 **Model insights based on French accident data (2019-2024):**")
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.caption("⏰ **Later time** → more people")
-        st.caption("🏙️ **Urban areas** → more people")
+        st.caption("⏰ **Later time** → more people involved")
+        st.caption("🏙️ **Urban areas** → more people involved")
     with col2:
-        st.caption("🔄 **Complex intersections** → more people")
-        st.caption("⭕ **Roundabouts** → fewer people")
+        st.caption("🔄 **Complex intersections** → more people involved")
+        st.caption("⭕ **Roundabouts** → fewer people involved")
     with col3:
-        st.caption("📅 **Weekends** → more people")
-        st.caption("⚡ **Higher speed** → more people")
+        st.caption("📅 **Weekends** → more people involved")
+        st.caption("⚡ **Higher speed** → more people involved")
 
 st.markdown("---")
-st.caption("💡 **Note**: Based on GLM model from historical accident data (320,488 accidents)")
-st.caption("📱 Mobile-optimized | Accident Severity Predictor")
+st.caption("💡 **Project**: Statistical Modeling of Traffic Accident Data on Large Road Networks")
+st.caption("📊 **Data source**: French national road accident database (2005-2024) | Consolidated for 2019-2024")
+st.caption("👥 **Authors**: F. Cola, M. Filoramo, G. Genouville, V. Mariani | **Supervisor**: S. Panzeri")
+st.caption("📱 **Mobile-optimized** | GLM-based Accident Severity Predictor")
