@@ -107,8 +107,8 @@ st.markdown("""
 # Fixed header with course and group information
 st.markdown("""
 <div class="fixed-header">
-    <h4>📊 Applied Statistics | Group 27</h4>
-    <p>F. Cola · M. Filoramo · G. Genouville · V. Mariani | Supervisor: S. Panzeri</p>
+    <p>📊 Applied Statistics | Group 27<p>
+    <p>F. Cola · M. Filoramo · G. Genouville · V. Mariani | Tutor: S. Panzeri</p>
 </div>
 """, unsafe_allow_html=True)
 
