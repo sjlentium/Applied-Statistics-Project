@@ -37,7 +37,7 @@ with st.sidebar:
     The model integrates spatial intensity and severity patterns to identify accident clusters and support road safety decision-making.
     """)
 
-# Mobile-friendly CSS
+# Mobile-friendly CSS (rimossa la riga che nasconde la toolbar)
 st.markdown("""
     <style>
         .stButton button {
@@ -50,9 +50,6 @@ st.markdown("""
         }
         .stSelectbox, .stSlider, .stTimeInput {
             margin-bottom: 1rem;
-        }
-        div[data-testid="stToolbar"] {
-            display: none;
         }
         @media (max-width: 768px) {
             .main > div {
