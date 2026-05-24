@@ -68,7 +68,7 @@ st.markdown("""
 
 # Introduction and project description
 st.markdown("""
-### 📊 **Project Overview**
+## 📊 **Statistical Modeling of Traffic Accident Data on Large Road Networks**
 
 This application is developed as part of a research project on **Statistical Modeling of Traffic Accident Data on Large Road Networks**, conducted in collaboration with public institutions. The goal is to gain an informed view of how traffic accidents are distributed over space and time, and how accident severity relates to environmental and contextual variables such as road characteristics, day category, and weather conditions.
 
@@ -186,8 +186,7 @@ with col1:
         help="Type of day (workday vs weekend)"
     )
 
-    # Lighting
-    st.subheader("💡 **Lighting**")
+    # Illuminance
     illuminance = st.slider(
         "Illuminance (lux)",
         min_value=0,
