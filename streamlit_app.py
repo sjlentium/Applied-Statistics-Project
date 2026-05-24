@@ -1,4 +1,4 @@
-# app.py - Versione con auto-addestramento all'avvio
+# app.py - Accident Predictor using GLM Model
 import streamlit as st
 import pickle
 import pandas as pd
@@ -8,15 +8,15 @@ import plotly.express as px
 import os
 import sys
 
-# Configurazione pagina (deve essere il primo comando Streamlit)
+# Page configuration (must be first Streamlit command)
 st.set_page_config(
-    page_title="Mixed Model Predictor",
-    page_icon="📊",
+    page_title="Accident Severity Predictor",
+    page_icon="🚗",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# CSS per mobile
+# Mobile-friendly CSS
 st.markdown("""
     <style>
         .stButton button {
@@ -59,254 +59,260 @@ st.markdown("""
             font-size: 0.8rem;
             text-align: center;
         }
-        .training-box {
-            background-color: #f0f2f6;
-            padding: 1rem;
-            border-radius: 10px;
-            margin: 1rem 0;
-        }
     </style>
 """, unsafe_allow_html=True)
 
-# Funzione per addestrare il modello
-def train_model():
-    """Addestra il modello e lo salva"""
-    with st.spinner('🧠 Addestramento del modello in corso... Attendere qualche secondo'):
-        try:
-            # Import qui per evitare conflitti
-            import numpy as np
-            import pandas as pd
-            from statsmodels.regression.mixed_linear_model import MixedLM
-            from statsmodels.tools import add_constant
-            
-            # Simula dati di esempio
-            np.random.seed(42)
-            n = 500
-            gruppi = np.repeat(range(50), 10)
-            
-            # Variabili
-            ora = np.random.uniform(6, 22, n)
-            temperatura = np.random.normal(20, 8, n)
-            umidita = np.random.normal(65, 15, n)
-            pioggia = np.random.binomial(1, 0.3, n)
-            
-            # Effetti casuali per gruppo
-            effetti_casuali = np.random.normal(0, 2, 50)
-            effetto_gruppo = effetti_casuali[gruppi]
-            
-            # Variabile target
-            target = (
-                5 + 
-                0.3 * ora + 
-                0.5 * temperatura - 
-                0.2 * umidita - 
-                1.5 * pioggia + 
-                effetto_gruppo + 
-                np.random.normal(0, 1, n)
-            )
-            
-            df = pd.DataFrame({
-                'target': target,
-                'ora': ora,
-                'temperatura': temperatura,
-                'umidita': umidita,
-                'pioggia': pioggia,
-                'gruppo': gruppi
-            })
-            
-            # Prepara per statsmodels
-            X = add_constant(df[['ora', 'temperatura', 'umidita', 'pioggia']])
-            y = df['target']
-            groups = df['gruppo']
-            
-            # Modello misto
-            model = MixedLM(y, X, groups)
-            result = model.fit(disp=False)  # disp=False per silenziare output
-            
-            # Salva modello
-            model_data = {
-                'model': result,
-                'feature_names': ['ora', 'temperatura', 'umidita', 'pioggia'],
-                'coefficienti': result.params.to_dict()
-            }
-            
-            with open('mixed_model.pkl', 'wb') as f:
-                pickle.dump(model_data, f)
-            
-            return True, result
-        except Exception as e:
-            return False, str(e)
-
-# Carica o addestra modello
+# Load the pre-trained GLM model
 @st.cache_resource
-def load_or_train_model():
-    """Carica il modello se esiste, altrimenti lo addestra"""
-    model_file = 'mixed_model.pkl'
+def load_model():
+    """Load the pre-trained GLM model coefficients"""
     
-    if not os.path.exists(model_file):
-        # Mostra messaggio di training
-        st.info("📊 **Primo avvio**: il modello sta venendo addestrato...")
-        success, result = train_model()
-        if success:
-            st.success("✅ Modello addestrato con successo!")
-            # Ricarica il modello
-            with open(model_file, 'rb') as f:
-                return pickle.load(f)
-        else:
-            st.error(f"❌ Errore nell'addestramento: {result}")
-            st.stop()
-    else:
-        # Carica modello esistente
-        with open(model_file, 'rb') as f:
-            return pickle.load(f)
+    # Model coefficients from your GLM output
+    model_coefficients = {
+        'intercept': 2.648e+00,
+        'source_year': {
+            '2020': -5.033e-02,
+            '2021': 3.078e-02,
+            '2022': 4.399e-02,
+            '2023': 5.182e-02,
+            '2024': 6.130e-02
+        },
+        'numeric_time': 2.335e-01,
+        'urban': {
+            'Urban': 8.480e-02,
+            'Non-urban': 0.0  # reference
+        },
+        'intersection': {
+            'X-shaped': 2.876e-01,
+            'T-shaped': 1.566e-01,
+            'Y-shaped': 1.073e-01,
+            '4 or more branches': 2.041e-01,
+            'Roundabout': -5.538e-02,
+            'Square': 4.284e-02,
+            'Level crossing': 2.501e-01,
+            'Other intersection': 1.076e-01,
+            'Unknown': 2.095e-03,
+            'No intersection': 0.0  # reference
+        },
+        'traffic': {
+            'One-way': 6.949e-02,
+            'Two-way': 2.322e-03,
+            'Dual carriageway': 1.814e-01,
+            'Dynamical lane assignment': 1.270e-01,
+            'Other/Unknown': 0.0  # reference
+        },
+        'gradient': {
+            'Flat': -1.138e+00,
+            'Hill': -1.218e+00,
+            'Top of the hill': -1.131e+00,
+            'Bottom of the hill': -1.232e+00,
+            'Other/Unknown': 0.0  # reference
+        },
+        'max_speed': 8.843e-03,
+        'school_holidays': 4.019e-02,
+        'day_type': {
+            'Work day': -1.388e-01,
+            'Saturday': 7.037e-03,
+            'Sunday': 0.0  # reference
+        },
+        'illuminance': 9.131e-07
+    }
+    
+    return model_coefficients
 
-# Carica modello
-try:
-    model_data = load_or_train_model()
-    model = model_data['model']
-except Exception as e:
-    st.error(f"❌ Errore critico: {e}")
-    st.stop()
+# Load model
+model = load_model()
 
-# Titolo
-st.title("📊 **Predittore con Mixed Model**")
-st.markdown("*Modello lineare a effetti misti per previsioni personalizzate*")
+# Title
+st.title("🚗 **Accident Severity Predictor**")
+st.markdown("*GLM Model for predicting number of people involved in traffic accidents*")
 st.divider()
 
-# Layout a colonne per input
+# Layout columns for inputs
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("🕐 **Tempo**")
-    orario = st.time_input(
-        "Seleziona orario",
-        value=time(12, 0),
-        help="Scegli l'ora del giorno"
-    )
-    ora_decimale = orario.hour + orario.minute/60
+    st.subheader("📅 **Time & Date**")
     
-    st.subheader("🌡️ **Temperatura**")
-    temperatura = st.slider(
-        "°C",
-        min_value=-10,
-        max_value=45,
-        value=20,
-        step=1,
-        help="Temperatura in gradi Celsius"
+    # Source year
+    source_year = st.selectbox(
+        "Year",
+        options=[2020, 2021, 2022, 2023, 2024],
+        help="Year of the accident"
+    )
+    
+    # Numeric time (converted from time input)
+    accident_time = st.time_input(
+        "Accident time",
+        value=time(12, 0),
+        help="Time when the accident occurred"
+    )
+    numeric_time = accident_time.hour + accident_time.minute/60
+    # Normalize to 0-1 range (assuming 24-hour cycle)
+    numeric_time_normalized = numeric_time / 24
+    
+    # School holidays
+    school_holidays = st.selectbox(
+        "School holidays",
+        options=["No", "Yes"],
+        help="Are school holidays in effect?"
+    )
+    school_holidays_bool = school_holidays == "Yes"
+    
+    # Day type
+    day_type = st.selectbox(
+        "Day type",
+        options=["Work day", "Saturday", "Sunday"],
+        help="Type of day"
     )
 
 with col2:
-    st.subheader("💧 **Umidità**")
-    umidita = st.slider(
-        "%",
-        min_value=0,
-        max_value=100,
-        value=65,
-        step=5,
-        help="Umidità relativa"
+    st.subheader("🏗️ **Road & Location**")
+    
+    # Urban
+    urban = st.selectbox(
+        "Area type",
+        options=["Non-urban", "Urban"],
+        help="Urban or non-urban area"
     )
     
-    st.subheader("🌧️ **Precipitazioni**")
-    pioggia = st.selectbox(
-        "Condizioni",
-        options=["☀️ Sole", "☁️ Nuvoloso", "🌧️ Pioggia", "⛈️ Temporale"],
-        help="Scegli le condizioni meteorologiche"
+    # Intersection type
+    intersection = st.selectbox(
+        "Intersection type",
+        options=["No intersection", "X-shaped", "T-shaped", "Y-shaped", 
+                 "4 or more branches", "Roundabout", "Square", 
+                 "Level crossing", "Other intersection", "Unknown"],
+        help="Type of intersection"
+    )
+    
+    # Traffic pattern
+    traffic = st.selectbox(
+        "Traffic pattern",
+        options=["Other/Unknown", "One-way", "Two-way", "Dual carriageway", 
+                 "Dynamical lane assignment"],
+        help="Traffic flow pattern"
+    )
+    
+    # Gradient
+    gradient = st.selectbox(
+        "Road gradient",
+        options=["Other/Unknown", "Flat", "Hill", "Top of the hill", "Bottom of the hill"],
+        help="Road gradient condition"
+    )
+    
+    # Max speed
+    max_speed = st.slider(
+        "Speed limit (km/h)",
+        min_value=20,
+        max_value=130,
+        value=50,
+        step=10,
+        help="Maximum allowed speed on the road"
     )
 
-# Converti pioggia
-pioggia_map = {
-    "☀️ Sole": 0,
-    "☁️ Nuvoloso": 0,
-    "🌧️ Pioggia": 1,
-    "⛈️ Temporale": 1
-}
-pioggia_val = pioggia_map[pioggia]
+st.subheader("💡 **Lighting**")
+illuminance = st.slider(
+    "Illuminance (lux)",
+    min_value=0,
+    max_value=100000,
+    value=5000,
+    step=1000,
+    help="Light level at accident location (0 = complete darkness, 100000 = bright sunlight)"
+)
 
-# Pulsante predizione
+# Prediction button
 st.markdown("---")
 col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
 with col_btn2:
-    predict_button = st.button("🔮 **PREVEDI**", use_container_width=True)
+    predict_button = st.button("🔮 **PREDICT**", use_container_width=True)
 
-# Visualizza risultato
+# Display prediction
 if predict_button:
-    # Crea dataframe per predizione
-    input_data = pd.DataFrame({
-        'const': [1.0],  # Aggiungi esplicitamente la costante
-        'ora': [ora_decimale],
-        'temperatura': [temperatura],
-        'umidita': [umidita],
-        'pioggia': [pioggia_val]
-    })
+    # Calculate prediction
+    prediction = model['intercept']
+    prediction += model['source_year'].get(str(source_year), 0)
+    prediction += model['numeric_time'] * numeric_time_normalized
+    if urban == "Urban":
+        prediction += model['urban']['Urban']
+    prediction += model['intersection'].get(intersection, 0)
+    prediction += model['traffic'].get(traffic, 0)
+    prediction += model['gradient'].get(gradient, 0)
+    prediction += model['max_speed'] * max_speed
+    if school_holidays_bool:
+        prediction += model['school_holidays']
+    prediction += model['day_type'].get(day_type, 0)
+    prediction += model['illuminance'] * illuminance
     
-    # Assicurati l'ordine corretto delle colonne
-    expected_cols = ['const', 'ora', 'temperatura', 'umidita', 'pioggia']
-    input_data = input_data[expected_cols]
+    # Ensure non-negative prediction
+    prediction = max(0, prediction)
     
-    try:
-        # Usa i coefficienti direttamente (predizione manuale)
-        coef = model.params
+    # Display prediction
+    st.markdown(f"""
+    <div class="prediction-card">
+        <div style="font-size: 1.1rem;">📊 PREDICTED NUMBER OF PEOPLE INVOLVED</div>
+        <div class="prediction-value">{prediction:.1f}</div>
+        <div style="font-size: 0.9rem;">people</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Show input details
+    with st.expander("📋 **Input details**"):
+        col_a, col_b, col_c = st.columns(3)
+        with col_a:
+            st.metric("📅 Year", source_year)
+            st.metric("🕐 Time", f"{accident_time.strftime('%H:%M')}")
+            st.metric("📆 Day type", day_type)
+        with col_b:
+            st.metric("🏙️ Area", urban)
+            st.metric("🛣️ Speed limit", f"{max_speed} km/h")
+            st.metric("🎒 School holidays", school_holidays)
+        with col_c:
+            st.metric("🔄 Intersection", intersection)
+            st.metric("🚦 Traffic", traffic)
+            st.metric("⛰️ Gradient", gradient)
+    
+    # Show model coefficients
+    with st.expander("🔬 **Model coefficients**"):
+        coef_data = []
         
-        prediction = (
-            coef['const'] * input_data['const'].iloc[0] +
-            coef['ora'] * input_data['ora'].iloc[0] +
-            coef['temperatura'] * input_data['temperatura'].iloc[0] +
-            coef['umidita'] * input_data['umidita'].iloc[0] +
-            coef['pioggia'] * input_data['pioggia'].iloc[0]
-        )
+        coef_data.append(["Intercept", f"{model['intercept']:.4f}"])
+        coef_data.append(["Numeric time", f"{model['numeric_time']:.4f}"])
+        coef_data.append(["Max speed", f"{model['max_speed']:.4f}"])
+        coef_data.append(["School holidays", f"{model['school_holidays']:.4f}"])
+        coef_data.append(["Illuminance", f"{model['illuminance']:.2e}"])
         
-        st.markdown(f"""
-        <div class="prediction-card">
-            <div style="font-size: 1.1rem;">📈 PREVISIONE</div>
-            <div class="prediction-value">{prediction:.2f}</div>
-            <div style="font-size: 0.9rem;">unità di misura</div>
-        </div>
-        """, unsafe_allow_html=True)
+        for year, coef in model['source_year'].items():
+            coef_data.append([f"Year {year}", f"{coef:.4f}"])
         
-        with st.expander("📋 **Dettagli input**"):
-            col_a, col_b = st.columns(2)
-            with col_a:
-                st.metric("🕐 Ora", f"{orario.strftime('%H:%M')}")
-                st.metric("💧 Umidità", f"{umidita}%")
-            with col_b:
-                st.metric("🌡️ Temperatura", f"{temperatura}°C")
-                st.metric("🌧️ Condizioni", pioggia)
+        for cat, coef in model['urban'].items():
+            if coef != 0:
+                coef_data.append([f"Urban - {cat}", f"{coef:.4f}"])
         
-        with st.expander("🔬 **Info modello statistico**"):
-            # Mostra coefficienti
-            coef_df = pd.DataFrame({
-                'Variabile': ['Intercetta', 'Ora', 'Temperatura', 'Umidità', 'Pioggia'],
-                'Coefficiente': [
-                    coef.get('const', 0),
-                    coef.get('ora', 0),
-                    coef.get('temperatura', 0),
-                    coef.get('umidita', 0),
-                    coef.get('pioggia', 0)
-                ]
-            })
-            st.dataframe(coef_df, use_container_width=True, hide_index=True)
-            
-            # Formula
-            st.caption(f"📐 **Formula**: {coef['const']:.2f} + {coef['ora']:.2f}×ora + {coef['temperatura']:.2f}×temp + {coef['umidita']:.2f}×umidità + {coef['pioggia']:.2f}×pioggia")
-            
-    except Exception as e:
-        st.error(f"Errore nella predizione: {e}")
-        st.write("Debug - coefficienti:", dict(model.params))
-        st.write("Debug - input:", input_data.iloc[0].to_dict())
+        for cat, coef in list(model['intersection'].items())[:5]:  # Top 5
+            if coef != 0:
+                coef_data.append([f"Intersection - {cat}", f"{coef:.4f}"])
+        
+        coef_df = pd.DataFrame(coef_data, columns=["Variable", "Coefficient"])
+        st.dataframe(coef_df, use_container_width=True, hide_index=True)
+        
+        st.caption(f"📐 **Prediction formula**: Intercept + sum of all effects based on selected inputs")
 
 else:
-    st.info("👆 **Imposta i valori sopra e premi PREVEDI**")
+    st.info("👆 **Set the values above and press PREDICT**")
     
     st.markdown("---")
-    st.caption("📊 **Esempio di funzionamento** - Il modello tiene conto di:")
+    st.caption("📊 **Model insights based on real accident data:**")
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.caption("🕐 **Effetto ora**\n(solitamente positivo)")
+        st.caption("⏰ **Later time** → more people")
+        st.caption("🏙️ **Urban areas** → more people")
     with col2:
-        st.caption("🌡️ **Effetto temperatura**\n(varia per contesto)")
+        st.caption("🔄 **Complex intersections** → more people")
+        st.caption("⭕ **Roundabouts** → fewer people")
     with col3:
-        st.caption("📦 **Effetti casuali**\n(per gruppo/stazione)")
+        st.caption("📅 **Weekends** → more people")
+        st.caption("⚡ **Higher speed** → more people")
 
 st.markdown("---")
-st.caption("💡 **Nota**: Modello dimostrativo con dati simulati | Addestrato automaticamente")
-st.caption("📱 App ottimizzata per dispositivi mobili | Mixed Linear Model")
+st.caption("💡 **Note**: Based on GLM model from historical accident data (320,488 accidents)")
+st.caption("📱 Mobile-optimized | Accident Severity Predictor")
