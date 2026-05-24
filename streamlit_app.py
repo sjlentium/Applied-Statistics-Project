@@ -16,13 +16,7 @@ import sys
 st.set_page_config(
     page_title="Accident Severity Predictor",
     page_icon="🚗",
-    layout="wide",
-    initial_sidebar_state="collapsed",
-    menu_items={
-        'Get Help': 'https://www.extremelycoolapp.com/help',
-        'Report a bug': "https://www.extremelycoolapp.com/bug",
-        'About': "# This is a header. This is an *extremely* cool app!"
-    }
+    initial_sidebar_state="collapsed"
 )
 
 # Mobile-friendly CSS
