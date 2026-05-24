@@ -21,6 +21,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+with st.sidebar:
+    st.markdown("### 📊 Applied Statistics | Group 27")
+    st.markdown("**Authors:** F. Cola, M. Filoramo, G. Genouville, V. Mariani")
+    st.markdown("**Supervisor:** S. Panzeri")
+
 # Simple fixed header using st.html (Streamlit 1.36+)
 st.html("""
 <div style="
