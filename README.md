@@ -12,7 +12,6 @@ Web app that predicts the number of people involved in a road accident using a *
 
 🔗 **Live**: [accident-severity-predictor.streamlit.app](https://accident-severity-predictor.streamlit.app)
 
----
 
 ## 🎯 What it does
 
@@ -25,7 +24,3 @@ Predicts `total_people_involved` based on:
 
 📚 Data source
 French national road accident database (2019-2024)
-
-👥 Authors
-F. Cola, M. Filoramo, G. Genouville, V. Mariani
-Course: Applied Statistics | Group: 27 | Tutor: S. Panzeri
