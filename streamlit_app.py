@@ -16,7 +16,7 @@ import sys
 st.set_page_config(
     page_title="Accident Severity Predictor",
     page_icon="🚗",
-    initial_sidebar_state="auto"
+    initial_sidebar_state="expanded"
 )
 
 with st.sidebar:
