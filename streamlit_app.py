@@ -25,7 +25,7 @@ with st.sidebar:
     st.markdown("**Tutor:** S. Panzeri")
     st.divider()
     st.markdown("""
-    ### 📊 **Statistical Modeling of Traffic Accident Data on Large Road Networks**
+    ### 🛣️ **Statistical Modeling of Traffic Accident Data on Large Road Networks**
     
     This application is developed as part of a research project on **Statistical Modeling of Traffic Accident Data on Large Road Networks**, conducted in collaboration with public institutions. The goal is to gain an informed view of how traffic accidents are distributed over space and time, and how accident severity relates to environmental and contextual variables such as road characteristics, day category, and weather conditions.
     
