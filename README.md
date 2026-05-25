@@ -1,23 +1,31 @@
-# 📊 Mixed Model Predictor
+# 🚗 Accident Severity Predictor
 
-App dimostrativa di regressione lineare a effetti misti.
+**Applied Statistics | Group 27**  
+*F. Cola, M. Filoramo, G. Genouville, V. Mariani*  
+*Tutor: S. Panzeri*
 
-## 🚀 Demo live
-[Link alla tua app dopo il deploy]
+---
 
-## 📱 Features
-- Interfaccia ottimizzata per mobile/tablet
-- Input: orario, temperatura, umidità, condizioni meteo
-- Predizione in tempo reale
-- Visualizzazione coefficienti del modello
+## 📌 Quick Overview
 
-## 🛠️ Tecnologie
-- Python + Streamlit
-- StatsModels (Mixed Linear Models)
-- Deploy su Hugging Face Spaces
+Web app that predicts the number of people involved in a road accident using a **GLM model** trained on French national accident data (2019-2024, n=320,488 accidents).
 
-## 👨‍💻 Uso locale
-```bash
-pip install -r requirements.txt
-python train_model.py
-streamlit run app.py
+🔗 **Live**: [accident-severity-predictor.streamlit.app](https://accident-severity-predictor.streamlit.app)
+
+---
+
+## 🎯 What it does
+
+Predicts `total_people_involved` based on:
+- 📅 **Time**: year, hour, day type, school holidays
+- 🏗️ **Road**: intersection type, traffic regime, gradient, speed limit
+- 💡 **Environment**: urban/rural, illuminance
+
+---
+
+📚 Data source
+French national road accident database (2019-2024)
+
+👥 Authors
+F. Cola, M. Filoramo, G. Genouville, V. Mariani
+Course: Applied Statistics | Group: 27 | Tutor: S. Panzeri
