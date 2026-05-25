@@ -265,7 +265,7 @@ if predict_button:
     # Display prediction
     st.markdown(f"""
     <div class="prediction-card">
-        <div style="font-size: 1.1rem;">📊 PREDICTED NUMBER OF PEOPLE INVOLVED</div>
+        <div style="font-size: 1.1rem;">PREDICTED NUMBER OF PEOPLE INVOLVED</div>
         <div class="prediction-value">{prediction:.1f}</div>
         <div style="font-size: 0.9rem;">people (including injured, hospitalized, and killed)</div>
     </div>
