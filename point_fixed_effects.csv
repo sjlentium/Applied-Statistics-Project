@@ -1,0 +1,33 @@
+"term","estimate"
+"(Intercept)",-1.33688986193759
+"brightnessDusk or dawn",0.141995992987174
+"brightnessNight without street lighting",0.347375082089407
+"brightnessNight with street lighting on",0.16854280927447
+"urbanRural",0.523728231260204
+"intersectionX-shaped",-0.284305157286071
+"intersectionT-shaped",-0.242051649963273
+"intersectionY-shaped",-0.126973192482685
+"intersection4 or more branches",-0.200793754722318
+"intersectionRoundabout",-0.227259384753909
+"intersectionSquare",-0.1396314510074
+"intersectionOther intersection",-0.0452226547472098
+"weatherDrizzle",-0.133161411677295
+"weatherSnow or hail",-0.192529518804647
+"weatherSmoke or fog",-0.00269822920426252
+"weatherDazzling",0.286317089705023
+"weatherOvercast",-0.0150952817812196
+"weatherOther",0.107829921339803
+"weatherStorm or heavy rain",-0.00893338988370603
+"surfaceWet",-0.0891248137653454
+"surfaceOther",0.312143408107458
+"surfaceSnow or ice",-0.163056901043244
+"trafficUnknown",-0.42846260418575
+"trafficOne-way",-0.643182601237856
+"trafficDual carriageway",-0.696926104962607
+"trafficDynamical lane assignment",-0.284870853828841
+"gradientHill",0.0973177827350485
+"gradientTop of the hill",0.0673732022779588
+"gradientBottom of the hill",0.156588703460247
+"turnLeft bend",0.348118690616687
+"turnRight bend",0.281835973115689
+"turnS-shaped bend",0.257226163891118
