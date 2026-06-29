@@ -167,7 +167,9 @@ with col1:
 with col2:
     
     urban = st.selectbox("Area type", ["Urban", "Rural"])
-    surface = st.selectbox("Surface condition", ["Normal", "Wet", "Snow or ice", "Other hazardous surface (mud, oil, etc...)"])
+    surface = st.selectbox("Surface condition", ["Normal", "Wet", "Snow or ice", "Other"], format_func=lambda value: {
+        "Other": "Other hazardous surface (mud, oil, etc...)"
+    }.get(value, value))
     turn = st.selectbox("Road layout (Turn)", ["Straight", "Left bend", "Right bend", "S-shaped bend"])
     gradient = st.selectbox("Road steepness", ["Flat", "Hill", "Top of the hill", "Bottom of the hill"])
 
