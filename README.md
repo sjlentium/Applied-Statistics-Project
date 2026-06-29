@@ -16,9 +16,9 @@ Web app that predicts the number of people involved in a road accident using a *
 ## 🎯 What it does
 
 Predicts `total_people_involved` based on:
-- 📅 **Time**: year, hour, day type, school holidays
-- 🏗️ **Road**: intersection type, traffic regime, gradient, speed limit
-- 💡 **Environment**: urban/rural, illuminance
+- 📍 **Department**
+- 🏗️ **Road**: intersection type, traffic regime, gradient
+- 💡 **Environment**: urban/rural, weather
 
 ---
 
