@@ -15,7 +15,7 @@ Web app that predicts the number of people involved in a road accident using a *
 
 ## 🎯 What it does
 
-Predicts `total_people_involved` based on:
+Predicts `severly_injured_risk` based on:
 - 📍 **Department**
 - 🏗️ **Road**: intersection type, traffic regime, gradient
 - 💡 **Environment**: urban/rural, weather
