@@ -10,7 +10,7 @@
 
 Web app that predicts the number of people involved in a road accident using a **GLM model** trained on French national accident data (2019-2024, n=320,488 accidents).
 
-🔗 **Live**: [accident-severity-predictor.streamlit.app](https://accident-severity-predictor.streamlit.app)
+🔗 **Live**: [accident-severity-predictor.streamlit.app](https://accident-severity.streamlit.app)
 
 
 ## 🎯 What it does
