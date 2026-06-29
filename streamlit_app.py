@@ -200,7 +200,31 @@ if predict_button:
     # 1. Point prediction: sum the intercept, the active coefficients,
     # and (if a department was chosen) its random-intercept point estimate.
     point_coefficients = model["point"]
-    eta_point = point_coefficients["(Intercept)"] + point_coefficients[active_terms].sum()
+
+    missing_point_terms = [
+        term
+        for term in active_terms
+        if term not in point_coefficients.index
+    ]
+    
+    if missing_point_terms:
+        st.error(
+            "Some selected levels do not match the coefficient names "
+            "exported from R."
+        )
+    
+        st.write("Selected terms:", active_terms)
+        st.write("Missing terms:", missing_point_terms)
+    
+        with st.expander("Available fixed-effect coefficients"):
+            st.code("\n".join(point_coefficients.index.astype(str)))
+    
+        st.stop()
+    
+    eta_point = (
+        point_coefficients["(Intercept)"]
+        + point_coefficients[active_terms].sum()
+    )
 
     department_chosen = department_selection != UNKNOWN_DEPARTMENT
     if department_chosen:
