@@ -47,7 +47,7 @@ st.markdown("""
 # point_fixed_effects.csv, bootstrap_fixed_effects.csv.gz,
 # point_random_effects.csv, bootstrap_random_effects.csv.gz.
 # Adjust if the files live elsewhere.
-DATA_DIR = Path(__file__).parent
+DATA_DIR = Path(__file__).resolve().parent / "DATA_DIR"
 
 
 @st.cache_resource
